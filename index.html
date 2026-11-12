@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Robert Aryawan Hartono — AI & Big Data student in Semarang. Interactive terminal portfolio: projects, skills, experience and CV.">
+<meta property="og:title" content="Robert Aryawan Hartono">
+<meta property="og:description" content="AI & Big Data student. Interactive terminal portfolio.">
+<meta property="og:url" content="https://rbrtary.github.io/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://rbrtary.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23060807'/%3E%3Ctext x='5' y='22' font-family='monospace' font-size='16' fill='%235fd38d'%3E%3E_%3C/text%3E%3C/svg%3E">
+<title>Robert Aryawan Hartono · Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=VT323&display=swap">
+<style>
+/* Layout: one-screen terminal app — header / [terminal | lanyard card] / status bar. Single dark look by choice. */
+:root{
+  --bg:#060807;
+  --panel:#090c0b;
+  --line:#1d3a29;
+  --fg:#d5ddd7;
+  --dim:#6c7b71;
+  --green:#5fd38d;
+  --blue:#82a8f5;
+  --amber:#e3b45f;
+  --red:#e8737c;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --pixel:"VT323", "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:14px;line-height:1.55}
+*{box-sizing:border-box}
+::selection{background:var(--green);color:var(--bg)}
+
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto;border:1px solid var(--line)}
+.bar{padding-block:10px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.bar h1{margin:0;font-size:20px;font-weight:600;color:var(--green);letter-spacing:.01em}
+.bar p{margin:0;color:var(--dim);font-size:12px}
+.bar .tag{font-size:12px;color:var(--dim)}
+.bar .tag b{color:var(--green);font-weight:500}
+
+main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);min-height:0}
+
+/* Terminal */
+.term{display:flex;flex-direction:column;min-height:0;min-width:0;border-right:1px solid var(--line);background:var(--panel)}
+.nav{padding:10px max(16px, env(safe-area-inset-left, 0px));border-bottom:1px solid var(--line);font-size:12.5px;display:flex;flex-wrap:wrap;gap:2px 0}
+.nav button{all:unset;cursor:pointer;color:var(--green);padding:0 2px}
+.nav button:hover,.nav button:focus-visible{background:var(--green);color:var(--bg)}
+.nav .sep{color:var(--dim);padding:0 6px}
+.screen{flex:1;overflow-y:auto;padding:14px 16px 18px max(16px, env(safe-area-inset-left, 0px));cursor:text;min-height:0}
+.screen::-webkit-scrollbar{width:8px}.screen::-webkit-scrollbar-thumb{background:var(--line)}
+.ln{white-space:pre-wrap;word-break:break-word;margin:0}
+.block{margin:0 0 14px}
+.u{color:var(--green)}.p{color:var(--blue)}.d{color:var(--dim)}.a{color:var(--amber)}.r{color:var(--red)}.b{font-weight:600;color:#fff}
+.ph{color:var(--amber);border-bottom:1px dashed var(--amber)}
+a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--blue)}
+.cmd{all:unset;cursor:pointer;color:var(--green)}
+.cmd:hover,.cmd:focus-visible{text-decoration:underline}
+.grid2{display:grid;grid-template-columns:max-content 1fr;gap:2px 18px}
+.proj{margin:0 0 12px;padding-left:12px;border-left:1px solid var(--line)}
+.proj .t{color:#fff;font-weight:600}
+.chips{color:var(--dim)}
+.inputline{display:flex;gap:8px;align-items:baseline}
+.inputline input{all:unset;flex:1;min-width:0;color:#fff;caret-color:var(--green);font:inherit}
+.copy{all:unset;cursor:pointer;color:var(--dim);font-size:12px;margin-left:8px}
+.copy:hover{color:var(--green)}
+.neo{display:flex;gap:22px;flex-wrap:wrap}
+.neo pre{margin:0;color:var(--green);line-height:1.2}
+
+/* Card stage */
+.stage{position:relative;min-height:0;overflow:hidden;perspective:1100px;background:
+  radial-gradient(ellipse 60% 45% at 50% 52%, rgba(95,211,141,.06), transparent 70%), var(--bg);
+  touch-action:none}
+.rig{position:absolute;left:50%;top:-14px;width:0;height:100%;transform-origin:0 0;transform-style:preserve-3d}
+.strap{position:absolute;left:-13px;top:0;width:26px;height:var(--strap,180px);background:#0f1311;border-left:1px solid #1b211e;border-right:1px solid #1b211e;overflow:hidden}
+.strap span{position:absolute;left:50%;top:0;writing-mode:vertical-rl;transform:translateX(-50%);font-size:10px;letter-spacing:.32em;color:#4f5e55;white-space:nowrap;text-transform:uppercase}
+.clip{position:absolute;left:-11px;top:calc(var(--strap,180px) - 4px);width:22px;height:26px;border:2px solid #4b5550;border-radius:11px 11px 4px 4px;background:transparent}
+.clip::after{content:"";position:absolute;left:50%;top:18px;width:8px;height:14px;transform:translateX(-50%);background:#3a423e;border-radius:2px}
+.cardwrap{position:absolute;left:0;top:calc(var(--strap,180px) + 26px);transform-style:preserve-3d}
+.card{position:relative;width:var(--cw,230px);aspect-ratio:.68;max-width:100%;transform:translateX(-50%);transform-style:preserve-3d;cursor:grab;outline:none}
+.card:active{cursor:grabbing}
+.card:focus-visible .face{box-shadow:0 0 0 2px var(--green),0 30px 60px rgba(0,0,0,.6)}
+.inner{position:absolute;inset:0;transform-style:preserve-3d}
+.face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;
+  background:linear-gradient(160deg,#1b201d 0%,#101412 55%,#0b0e0c 100%);
+  border:1px solid #2b332e;box-shadow:0 30px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;padding:14px}
+.face::before{content:"";position:absolute;left:50%;top:7px;width:34px;height:6px;transform:translateX(-50%);border-radius:3px;background:var(--bg);box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+.shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.09) 45%,transparent 60%);background-size:250% 100%;background-position:var(--sx,50%) 0;mix-blend-mode:screen}
+.f-top{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:#9aa69e}
+.mark{width:22px;height:22px;border:1.5px solid var(--green);border-radius:4px;display:grid;place-items:center;color:var(--green);font-size:10px;font-weight:600}
+.photo{position:relative;flex:1;margin:10px 0;border-radius:6px;background:#0a0d0b;border:1px solid #232a26;display:grid;place-items:center;overflow:hidden;background-size:cover;background-position:center;filter:grayscale(1) contrast(1.05)}
+.photo .init{font-family:var(--pixel);font-size:110px;line-height:1;color:#26302a}
+.photo .hint{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:10px;color:var(--dim)}
+.photo.has .init,.photo.has .hint{display:none}
+.photo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);pointer-events:none}
+.f-name{font-size:17px;font-weight:600;color:#fff;letter-spacing:.01em}
+.f-role{font-size:11px;color:var(--green)}
+.f-meta{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px;font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.barcode{height:20px;width:82px;background:repeating-linear-gradient(90deg,#9aa69e 0 1px,transparent 1px 3px,#9aa69e 3px 5px,transparent 5px 6px,#9aa69e 6px 7px,transparent 7px 10px)}
+.back{transform:rotateY(180deg);align-items:center;justify-content:center;gap:12px;text-align:center}
+.back canvas{width:58%;aspect-ratio:1;image-rendering:pixelated;border-radius:4px}
+.back .l1{font-size:11px;color:var(--fg)}
+.back .l2{font-size:10px;color:var(--dim);line-height:1.5}
+.stage-label{position:absolute;right:max(14px, env(safe-area-inset-right, 0px));bottom:10px;font-size:11.5px;color:var(--green);pointer-events:none}
+.stage-help{position:absolute;left:14px;bottom:10px;font-size:11px;color:var(--dim);pointer-events:none}
+
+.status{padding-block:6px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.status .u{color:var(--green)}
+
+@media (max-width:820px){
+  html,body{height:auto}
+  .app{height:auto;min-height:100%}
+  main{grid-template-columns:1fr}
+  .term{border-right:0;border-bottom:1px solid var(--line);height:64vh;min-height:380px}
+  .stage{height:520px}
+  .stage-help{display:none}
+}
+@media (prefers-reduced-motion:reduce){.shine{display:none}}
+</style>
+<style>html{padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="bar">
+    <div>
+      <h1 id="hdrName">Robert</h1>
+      <p id="hdrRole">AI &amp; Big Data Student</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="term" aria-label="Terminal">
+      <nav class="nav" id="nav" aria-label="Commands"></nav>
+      <div class="screen" id="screen">
+        <div id="out"></div>
+        <div class="inputline">
+          <span class="prompt-html"></span>
+          <input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type a command">
+        </div>
+      </div>
+    </section>
+
+    <section class="stage" id="stage" aria-label="Interactive ID card">
+      <div class="rig" id="rig">
+        <div class="strap"><span id="strapText"></span></div>
+        <div class="clip"></div>
+        <div class="cardwrap">
+          <div class="card" id="card" tabindex="0" role="button" aria-label="ID card. Press Enter to flip.">
+            <div class="inner" id="inner">
+              <div class="face front">
+                <div class="f-top"><div class="mark">&gt;_</div><span id="cardHandle">rbrtary</span></div>
+                <div class="photo" id="photo">
+                  <div class="init" id="cardInit">R</div>
+                  
+                </div>
+                <div class="f-name" id="cardName">Robert</div>
+                <div class="f-role" id="cardRole">AI &amp; Big Data Student</div>
+                <div class="f-meta"><span>semarang · id<br>access: guest</span><div class="barcode"></div></div>
+                <div class="shine"></div>
+              </div>
+              <div class="face back">
+                <canvas id="qr" width="25" height="25" aria-hidden="true"></canvas>
+                <div class="l1">scan → portfolio</div>
+                <div class="l2">if found, return to<br><span class="u">rbrtary.github.io</span></div>
+                <div class="shine"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-help">drag · double-click to flip</div>
+      <div class="stage-label">[Interactive 3D Card]</div>
+    </section>
+  </main>
+
+  <footer class="status">
+    <span><span class="u" id="statusPrompt">robert@portfolio</span>:~$</span>
+    <span id="clock"></span>
+  </footer>
+</div>
+
+<script>
+/* ====== EDIT YOUR DATA HERE ====== */
+const ME = {
+  name: "Robert Aryawan Hartono",
+  cardName: "Robert A. Hartono",   // shorter name for the ID card
+  user: "robert",
+  host: "portfolio",
+  handle: "rbrtary",
+  role: "AI & Big Data Student",
+  location: "Semarang, Indonesia",
+  photo: "avatar.jpg",             // put avatar.jpg next to index.html
+  tagline: "an AI & Big Data student who lives in the terminal.",
+  about: [
+    "I study Artificial Intelligence & Big Data at Soegijapranata Catholic University",
+    "in Semarang. I like the part where raw data turns into something you can",
+    "query, model and ship, and I build backend APIs on the side.",
+    "Daily driver: Ubuntu LTS. Comfortable in bash, SQL and Python.",
+    "Currently looking for an internship (backend / data)."
+  ],
+  education: [
+    { school: "Soegijapranata Catholic University", degree: "Artificial Intelligence & Big Data", years: "[2024] – present" }
+  ],
+  projects: [
+    { name: "api-mini-social-media", desc: "[One line: what the API does, e.g. users, posts, likes, auth.]", stack: "[stack]", link: "https://github.com/rbrtary/minisocialmedia" },
+    { name: "portoconect", desc: "[One line: what Portoconect does and your part in it.]", stack: "[stack]", link: "https://github.com/rbrtary/portoconect" },
+    { name: "library-information-system", desc: "Information system for managing a library's books, members and loans.", stack: "[stack]", link: "" },
+    { name: "review-search-engine", desc: "Full-text search over Amazon product reviews (Kaggle) in PostgreSQL: tsvector columns, GIN index, ts_rank ranking.", stack: "PostgreSQL · SQL · Python", link: "" },
+    { name: "leakage-free-ml-pipeline", desc: "Group ML project: preprocessing and model wrapped in a scikit-learn Pipeline so scaling is fitted on training data only.", stack: "Python · pandas · scikit-learn", link: "" }
+  ],
+  skills: {
+    "languages": ["Python", "SQL", "Bash"],
+    "backend":   ["REST API", "PostgreSQL"],
+    "data / ml": ["pandas", "NumPy", "scikit-learn", "OpenCV"],
+    "tools":     ["Linux (Ubuntu)", "Git", "VS Code"]
+  },
+  experience: [
+    { role: "[Role]", org: "BEM FIK", years: "[years]", desc: "[What you did in the student executive board.]" },
+    { role: "Teacher", org: "Komunitas Papua, Beasiswa Freeport SCU", years: "[years]", desc: "[Who you taught and what.]" },
+    { role: "[Role]", org: "Soe.Sip", years: "[years]", desc: "[What you did.]" },
+    { role: "Owner", org: "Food & snack small business", years: "[years]", desc: "Ran a small food and snack business on the side." }
+  ],
+  achievements: [
+    { name: "1st place, IDEAFEST 2025", note: "[category / what you built]" }
+  ],
+  certifications: [
+    { name: "[Course name]", issuer: "Codepolitan", year: "[year]" }
+  ],
+  contact: {
+    email: "robertaryawan762378@gmail.com",
+    github: "github.com/rbrtary",
+    linkedin: "linkedin.com/in/roberthartono"
+  },
+  cvLink: "cv.pdf"                 // put cv.pdf next to index.html
+};
+/* ================================== */
+
+const $ = s => document.querySelector(s);
+const out = $("#out"), input = $("#cmd"), screen = $("#screen");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ph = s => /^\[.*\]$/.test(s) ? `<span class="ph">${esc(s)}</span>` : esc(s);
+const promptHTML = `<span class="u">${ME.user}@${ME.host}</span>:<span class="p">~</span>$`;
+
+document.querySelectorAll(".prompt-html").forEach(e => e.innerHTML = promptHTML);
+$("#hdrName").textContent = ME.name; $("#hdrRole").textContent = ME.role;
+$("#cardName").textContent = ME.cardName || ME.name; $("#cardHandle").textContent = ME.handle; $("#cardRole").textContent = ME.role;
+$("#cardInit").textContent = ME.name[0];
+$("#statusPrompt").textContent = `${ME.user}@${ME.host}`;
+$("#strapText").textContent = (`${ME.handle} · ai & big data · `).repeat(8);
+
+const linkOr = (v) => {
+  if (/^\[.*\]$/.test(v)) return ph(v);
+  if (v.includes("@") && !v.includes("/")) return `<span>${esc(v)}</span><button class="copy" data-copy="${esc(v)}">[copy]</button>`;
+  return `<a href="https://${esc(v.replace(/^https?:\/\//,""))}" target="_blank" rel="noopener">${esc(v)}</a>`;
+};
+
+const C = {
+  help: { d: "list available commands", run: () => {
+    const rows = Object.entries(C).filter(([,v]) => !v.hidden)
+      .map(([k,v]) => `<button class="cmd" data-run="${k}">${k.padEnd(15)}</button><span class="d">${esc(v.d)}</span>`).join("");
+    return `<div class="grid2">${rows}</div><div class="d" style="margin-top:8px">tip: ↑/↓ history · tab to autocomplete · click any command</div>`;
+  }},
+  welcome: { d: "show the greeting", run: () =>
+    `Hi, I'm <span class="b">${esc(ME.name)}</span>, ${esc(ME.tagline)}\n\nWelcome to my interactive portfolio terminal.\nType <button class="cmd" data-run="help">'help'</button> to see available commands.` },
+  about: { d: "who I am", run: () => ME.about.map(esc).join("\n") },
+  projects: { d: "things I've built", run: () => ME.projects.map(p =>
+    `<div class="proj"><div class="t">${esc(p.name)}</div><div>${ph(p.desc)}</div><div class="chips">${esc(p.stack)}${p.link ? ` · <a href="${esc(p.link)}" target="_blank" rel="noopener">repo ↗</a>` : ""}</div></div>`).join("") },
+  skills: { d: "tools & languages", run: () =>
+    `<div class="grid2">${Object.entries(ME.skills).map(([k,v]) => `<span class="u">${esc(k)}</span><span>${v.map(esc).join(" · ")}</span>`).join("")}</div>` },
+  experience: { d: "work history", run: () => ME.experience.length
+    ? ME.experience.map(e => `<div class="proj"><div class="t">${ph(e.role)} <span class="d">@</span> ${esc(e.org)} <span class="d">· ${ph(e.years)}</span></div><div>${ph(e.desc)}</div></div>`).join("")
+    : `<span class="d">$ cat experience.log\n(empty) — first internship loading...</span>` },
+  education: { d: "where I study", run: () => ME.education.map(e =>
+    `<div class="proj"><div class="t">${ph(e.school)}</div><div>${esc(e.degree)}</div><div class="d">${ph(e.years)}</div></div>`).join("") },
+  achievements: { d: "awards & competitions", run: () =>
+    ME.achievements.map(a => `<span class="a">★</span> <span class="b">${esc(a.name)}</span> <span class="d">— ${ph(a.note)}</span>`).join("\n") },
+  certifications: { d: "courses & certificates", run: () => ME.certifications.length
+    ? ME.certifications.map(c => `• ${ph(c.name)} <span class="d">— ${esc(c.issuer)}, ${ph(c.year)}</span>`).join("\n")
+    : `<span class="d">no certificates listed yet</span>` },
+  contact: { d: "how to reach me", run: () =>
+    `<div class="grid2"><span class="u">email</span><span>${linkOr(ME.contact.email)}</span><span class="u">github</span><span>${linkOr(ME.contact.github)}</span><span class="u">linkedin</span><span>${linkOr(ME.contact.linkedin)}</span></div>` },
+  cv: { d: "download my CV (PDF)", run: () => ME.cvLink
+    ? `opening <a href="${esc(ME.cvLink)}" target="_blank" rel="noopener">cv.pdf ↗</a>`
+    : `<span class="ph">[set ME.cvLink to your PDF link]</span>` },
+  neofetch: { d: "system info, but it's me", run: () => {
+    const art = ["  ██████  ","  ██   ██ ","  ██████  ","  ██   ██ ","  ██   ██ "].join("\n");
+    const info = [
+      `<span class="u">${ME.user}</span>@<span class="u">${ME.host}</span>`, "-----------------",
+      `<span class="u">OS</span>: Ubuntu 26.04 LTS x86_64`, `<span class="u">Location</span>: ${esc(ME.location)}`, `<span class="u">Role</span>: ${esc(ME.role)}`,
+      `<span class="u">Shell</span>: bash`, `<span class="u">Langs</span>: ${ME.skills.languages.map(esc).join(", ")}`,
+      `<span class="u">Status</span>: open to internship`, `<span class="u">Award</span>: ${esc(ME.achievements[0].name)}`, `<span class="u">Uptime</span>: ${uptime()}`
+    ].join("\n");
+    return `<div class="neo"><pre>${art}</pre><div>${info}</div></div>`;
+  }},
+  whoami: { d: "print current user", run: () => esc(ME.user) },
+  ls: { d: "list files", run: () => `<span class="p">projects/</span>  <span class="p">certs/</span>  about.txt  skills.md  contact.vcf  cv.pdf` },
+  flip: { d: "flip the ID card", run: () => { flipCard(); return `<span class="d">card flipped</span>`; } },
+  sudo: { d: "try it", run: () => `<span class="r">[sudo] password for guest: </span>\n<span class="r">guest is not in the sudoers file. This incident will be reported.</span>` },
+  clear: { d: "clear the screen", run: () => { out.innerHTML = ""; return null; } },
+  history: { d: "", hidden: true, run: () => hist.map((h,i) => `${String(i+1).padStart(4)}  ${esc(h)}`).join("\n") || "" },
+  pwd: { d: "", hidden: true, run: () => `/home/${ME.user}` },
+  date: { d: "", hidden: true, run: () => new Date().toString() },
+  exit: { d: "", hidden: true, run: () => `<span class="d">logout? nice try. you're stuck with me.</span>` },
+};
+const NAV = ["help","about","projects","skills","experience","education","achievements","certifications","contact","cv","clear"];
+$("#nav").innerHTML = NAV.map(n => `<button data-run="${n}">${n}</button>`).join('<span class="sep">|</span>');
+
+const t0 = Date.now();
+function uptime(){ const s = Math.floor((Date.now()-t0)/1000); return `${Math.floor(s/60)} min ${s%60} s`; }
+
+const hist = []; let hi = 0;
+function print(html){ const d = document.createElement("div"); d.className = "block"; d.innerHTML = html; out.appendChild(d); }
+function exec(raw){
+  const line = raw.trim();
+  print(`<div class="ln">${promptHTML} ${esc(line)}</div>`);
+  if (line) { hist.push(line); hi = hist.length; }
+  const [name, ...args] = line.split(/\s+/);
+  if (!name) { scrollEnd(); return; }
+  let res;
+  if (name === "echo") res = esc(args.join(" "));
+  else if (name === "sudo") res = C.sudo.run();
+  else if (C[name.toLowerCase()]) res = C[name.toLowerCase()].run(args);
+  else res = `<span class="r">${esc(name)}: command not found</span>. Try <button class="cmd" data-run="help">help</button>.`;
+  if (res !== null) out.lastChild.insertAdjacentHTML("beforeend", `<div class="ln">${res}</div>`);
+  scrollEnd();
+}
+function scrollEnd(){ screen.scrollTop = screen.scrollHeight; }
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") { exec(input.value); input.value = ""; }
+  else if (e.key === "ArrowUp") { if (hi > 0) { hi--; input.value = hist[hi]; } e.preventDefault(); }
+  else if (e.key === "ArrowDown") { if (hi < hist.length) { hi++; input.value = hist[hi] || ""; } e.preventDefault(); }
+  else if (e.key === "Tab") {
+    e.preventDefault();
+    const v = input.value.trim().toLowerCase(); if (!v) return;
+    const m = Object.keys(C).filter(k => k.startsWith(v));
+    if (m.length === 1) input.value = m[0];
+    else if (m.length > 1) { print(`<div class="ln">${promptHTML} ${esc(v)}</div><div class="ln d">${m.join("   ")}</div>`); scrollEnd(); }
+  } else if (e.key === "l" && e.ctrlKey) { e.preventDefault(); out.innerHTML = ""; }
+});
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-run]");
+  if (r) { exec(r.dataset.run); input.focus({preventScroll:true}); return; }
+  const c = e.target.closest("[data-copy]");
+  if (c) {
+    const txt = c.dataset.copy;
+    const ok = () => { c.textContent = "[copied]"; setTimeout(() => c.textContent = "[copy]", 1400); };
+    try { navigator.clipboard.writeText(txt).then(ok, () => selectText(c.previousElementSibling)); } catch { selectText(c.previousElementSibling); }
+  }
+});
+function selectText(el){ const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+screen.addEventListener("mouseup", () => { if (!getSelection().toString()) input.focus({preventScroll:true}); });
+
+/* boot */
+(function boot(){
+  const cmd = "welcome"; let i = 0;
+  const typed = document.createElement("div"); typed.className = "ln";
+  out.appendChild(typed);
+  const step = () => {
+    typed.innerHTML = `${promptHTML} ${cmd.slice(0, i)}<span class="u">▋</span>`;
+    if (i++ < cmd.length) setTimeout(step, 70); else { typed.remove(); exec(cmd); }
+  };
+  step();
+})();
+
+/* clock */
+function tick(){ $("#clock").textContent = new Date().toLocaleString("en-GB", { weekday:"short", day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit", second:"2-digit" }); }
+tick(); setInterval(tick, 1000);
+
+/* ====== 3D lanyard card ====== */
+const stage = $("#stage"), rig = $("#rig"), card = $("#card"), inner = $("#inner");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function size(){
+  const h = stage.clientHeight, w = stage.clientWidth;
+  const cw = Math.min(250, w * 0.62, (h * 0.62) * 0.68);
+  stage.style.setProperty("--cw", cw + "px");
+  stage.style.setProperty("--strap", Math.max(60, h * 0.5 - (cw / 0.68) / 2 - 10) + "px");
+}
+size(); addEventListener("resize", size);
+
+const S = { sw:0, vsw:0, rx:0, vrx:0, ry:0, vry:0 };
+const T = { sw:0, rx:0, ry:0 };
+let flip = 0, drag = null, hover = null;
+function flipCard(){ flip = flip ? 0 : 180; S.vsw += 2.5; }
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+card.addEventListener("pointerdown", e => {
+  drag = { x:e.clientX, y:e.clientY, lx:e.clientX, t:performance.now(), v:0, moved:false };
+  card.setPointerCapture(e.pointerId);
+});
+card.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+  const now = performance.now(); drag.v = (e.clientX - drag.lx) / Math.max(1, now - drag.t); drag.lx = e.clientX; drag.t = now;
+  T.sw = clamp(-dx * 0.09, -28, 28);
+  T.ry = flip + clamp(dx * 0.55, -160, 160);
+  T.rx = clamp(-dy * 0.35, -45, 45);
+});
+const release = () => { if (!drag) return; S.vsw += clamp(-drag.v * 6, -12, 12); drag = null; };
+card.addEventListener("pointerup", release); card.addEventListener("pointercancel", release);
+card.addEventListener("dblclick", flipCard);
+card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flipCard(); } });
+stage.addEventListener("pointermove", e => {
+  if (drag || e.pointerType !== "mouse") return;
+  const r = stage.getBoundingClientRect();
+  hover = { x:(e.clientX - r.left) / r.width - .5, y:(e.clientY - r.top) / r.height - .5 };
+});
+stage.addEventListener("pointerleave", () => hover = null);
+
+function spring(k, d, key, vkey, target){ S[vkey] += (target - S[key]) * k; S[vkey] *= d; S[key] += S[vkey]; }
+function frame(t){
+  if (!drag) {
+    T.ry = flip + (hover ? hover.x * 30 : 0);
+    T.rx = hover ? -hover.y * 22 : 0;
+    T.sw = reduce ? 0 : Math.sin(t / 1700) * 1.6;
+  }
+  spring(0.035, 0.94, "sw", "vsw", T.sw);
+  spring(0.06, 0.86, "rx", "vrx", T.rx);
+  spring(0.06, 0.86, "ry", "vry", T.ry);
+  rig.style.transform = `rotateZ(${S.sw}deg)`;
+  inner.style.transform = `rotateX(${S.rx}deg) rotateY(${S.ry}deg)`;
+  const sx = 50 + ((S.ry % 360) / 3) + S.rx;
+  document.querySelectorAll(".shine").forEach(s => s.style.setProperty("--sx", sx + "%"));
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* profile photo: loads ME.photo if the file exists, otherwise keeps the initial */
+(function(){
+  if (!ME.photo) return;
+  const img = new Image();
+  img.onload = () => { const ph = $("#photo"); ph.style.backgroundImage = `url("${ME.photo}")`; ph.classList.add("has"); };
+  img.src = ME.photo;
+})();
+
+/* decorative QR-like pattern on the back */
+(function qr(){
+  const c = $("#qr"), x = c.getContext("2d"), n = 25;
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  x.fillStyle = "#0b0e0c"; x.fillRect(0,0,n,n);
+  x.fillStyle = "#d5ddd7";
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++) if (rnd() > .52) x.fillRect(i,j,1,1);
+  const eye = (a,b) => { x.fillStyle="#d5ddd7"; x.fillRect(a,b,7,7); x.fillStyle="#0b0e0c"; x.fillRect(a+1,b+1,5,5); x.fillStyle="#5fd38d"; x.fillRect(a+2,b+2,3,3); };
+  eye(0,0); eye(n-7,0); eye(0,n-7);
+})();
+</script>
+
+</body>
+</html>
