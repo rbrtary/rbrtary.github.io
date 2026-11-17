@@ -45,10 +45,14 @@ main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);min-heigh
 
 /* Terminal */
 .term{display:flex;flex-direction:column;min-height:0;min-width:0;border-right:1px solid var(--line);background:var(--panel)}
-.nav{padding:10px max(16px, env(safe-area-inset-left, 0px));border-bottom:1px solid var(--line);font-size:12.5px;display:flex;flex-wrap:wrap;gap:2px 0}
+.nav{padding:8px 16px 10px max(16px, env(safe-area-inset-left, 0px));border-bottom:1px solid var(--line);font-size:12.5px}
+.nav-hint{margin:0 0 4px;font-size:11px;color:var(--dim)}
+.nav-hint b{color:var(--fg);font-weight:500}
+.nav-list{display:flex;flex-wrap:wrap;gap:2px 0}
+.nav-item{white-space:nowrap}
+.nav-item:not(:last-child)::after{content:"|";color:var(--dim);padding:0 7px}
 .nav button{all:unset;cursor:pointer;color:var(--green);padding:0 2px}
 .nav button:hover,.nav button:focus-visible{background:var(--green);color:var(--bg)}
-.nav .sep{color:var(--dim);padding:0 6px}
 .screen{flex:1;overflow-y:auto;padding:14px 16px 18px max(16px, env(safe-area-inset-left, 0px));cursor:text;min-height:0}
 .screen::-webkit-scrollbar{width:8px}.screen::-webkit-scrollbar-thumb{background:var(--line)}
 .ln{white-space:pre-wrap;word-break:break-word;margin:0}
@@ -65,6 +69,10 @@ a:hover{border-bottom-color:var(--blue)}
 .chips{color:var(--dim)}
 .inputline{display:flex;gap:8px;align-items:baseline}
 .inputline input{all:unset;flex:1;min-width:0;color:#fff;caret-color:var(--green);font:inherit}
+.inputline input::placeholder{color:var(--dim);opacity:.75}
+.links{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12.5px}
+.links a{color:var(--fg);border-bottom:1px solid var(--line)}
+.links a:hover,.links a:focus-visible{color:var(--green);border-bottom-color:var(--green)}
 .copy{all:unset;cursor:pointer;color:var(--dim);font-size:12px;margin-left:8px}
 .copy:hover{color:var(--green)}
 .neo{display:flex;gap:22px;flex-wrap:wrap}
@@ -130,16 +138,20 @@ a:hover{border-bottom-color:var(--blue)}
       <h1 id="hdrName">Robert</h1>
       <p id="hdrRole">AI &amp; Big Data Student</p>
     </div>
+    <nav class="links" id="links" aria-label="Links"></nav>
   </header>
 
   <main>
     <section class="term" aria-label="Terminal">
-      <nav class="nav" id="nav" aria-label="Commands"></nav>
+      <nav class="nav" aria-label="Commands">
+        <p class="nav-hint"><b>Click</b> a command below, or <b>type</b> it in the terminal and press Enter.</p>
+        <div class="nav-list" id="nav"></div>
+      </nav>
       <div class="screen" id="screen">
         <div id="out"></div>
         <div class="inputline">
           <span class="prompt-html"></span>
-          <input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type a command">
+          <input id="cmd" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type a command" placeholder="type a command…">
         </div>
       </div>
     </section>
@@ -194,12 +206,12 @@ const ME = {
   role: "AI & Big Data Student",
   location: "Semarang, Indonesia",
   photo: "avatar.jpg",             // put avatar.jpg next to index.html
-  tagline: "an AI & Big Data student who lives in the terminal.",
+  tagline: "an AI & Big Data student who builds backend and data projects.",
   about: [
     "I study Artificial Intelligence & Big Data at Soegijapranata Catholic University",
     "in Semarang. I like the part where raw data turns into something you can",
     "query, model and ship, and I build backend APIs on the side.",
-    "Daily driver: Ubuntu LTS. Comfortable in bash, SQL and Python.",
+    "Comfortable with Python and SQL, on both Windows and Linux.",
     "Currently looking for an internship (backend / data)."
   ],
   education: [
@@ -216,7 +228,7 @@ const ME = {
     "languages": ["Python", "SQL", "Bash"],
     "backend":   ["REST API", "PostgreSQL"],
     "data / ml": ["pandas", "NumPy", "scikit-learn", "OpenCV"],
-    "tools":     ["Linux (Ubuntu)", "Git", "VS Code"]
+    "tools":     ["Git", "VS Code", "Windows & Linux"]
   },
   experience: [
     { role: "Internal", org: "BEM FIKOM", years: "1 year", desc: "[What you did in the student executive board.]" },
@@ -242,7 +254,11 @@ const ME = {
 const $ = s => document.querySelector(s);
 const out = $("#out"), input = $("#cmd"), screen = $("#screen");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ph = s => /^\[.*\]$/.test(s) ? `<span class="ph">${esc(s)}</span>` : esc(s);
+const isPh = s => /^\[.*\]$/.test(String(s || "").trim());
+// Unfilled "[...]" fields are hidden. Set SHOW_TODO = true (or open the site with #todo) to see them while editing.
+const SHOW_TODO = location.hash === "#todo";
+const ph = s => isPh(s) ? (SHOW_TODO ? `<span class="ph">${esc(s)}</span>` : "") : esc(s);
+const opt = (s, pre = "", post = "") => { const v = ph(s); return v ? pre + v + post : ""; };
 const promptHTML = `<span class="u">${ME.user}@${ME.host}</span>:<span class="p">~</span>$`;
 
 document.querySelectorAll(".prompt-html").forEach(e => e.innerHTML = promptHTML);
@@ -265,21 +281,21 @@ const C = {
     return `<div class="grid2">${rows}</div><div class="d" style="margin-top:8px">tip: ↑/↓ history · tab to autocomplete · click any command</div>`;
   }},
   welcome: { d: "show the greeting", run: () =>
-    `Hi, I'm <span class="b">${esc(ME.name)}</span>, ${esc(ME.tagline)}\n\nWelcome to my interactive portfolio terminal.\nType <button class="cmd" data-run="help">'help'</button> to see available commands.` },
+    `Hi, I'm <span class="b">${esc(ME.name)}</span>, ${esc(ME.tagline)}\n\nWelcome to my interactive portfolio terminal.\nType <button class="cmd" data-run="help">'help'</button> to see all commands, or click one in the menu above.` },
   about: { d: "who I am", run: () => ME.about.map(esc).join("\n") },
   projects: { d: "things I've built", run: () => ME.projects.map(p =>
-    `<div class="proj"><div class="t">${esc(p.name)}</div><div>${ph(p.desc)}</div><div class="chips">${esc(p.stack)}${p.link ? ` · <a href="${esc(p.link)}" target="_blank" rel="noopener">repo ↗</a>` : ""}</div></div>`).join("") },
+    `<div class="proj"><div class="t">${esc(p.name)}</div>${opt(p.desc, "<div>", "</div>")}<div class="chips">${[ph(p.stack), p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">repo ↗</a>` : ""].filter(Boolean).join(" · ")}</div></div>`).join("") },
   skills: { d: "tools & languages", run: () =>
     `<div class="grid2">${Object.entries(ME.skills).map(([k,v]) => `<span class="u">${esc(k)}</span><span>${v.map(esc).join(" · ")}</span>`).join("")}</div>` },
   experience: { d: "work history", run: () => ME.experience.length
-    ? ME.experience.map(e => `<div class="proj"><div class="t">${ph(e.role)} <span class="d">@</span> ${esc(e.org)} <span class="d">· ${ph(e.years)}</span></div><div>${ph(e.desc)}</div></div>`).join("")
+    ? ME.experience.map(e => `<div class="proj"><div class="t">${opt(e.role, "", ` <span class="d">@</span> `)}${esc(e.org)}${opt(e.years, ` <span class="d">· `, `</span>`)}</div>${opt(e.desc, "<div>", "</div>")}</div>`).join("")
     : `<span class="d">$ cat experience.log\n(empty) — first internship loading...</span>` },
   education: { d: "where I study", run: () => ME.education.map(e =>
-    `<div class="proj"><div class="t">${ph(e.school)}</div><div>${esc(e.degree)}</div><div class="d">${ph(e.years)}</div></div>`).join("") },
+    `<div class="proj"><div class="t">${ph(e.school)}</div><div>${esc(e.degree)}</div>${opt(e.years, `<div class="d">`, `</div>`)}</div>`).join("") },
   achievements: { d: "awards & competitions", run: () =>
-    ME.achievements.map(a => `<span class="a">★</span> <span class="b">${esc(a.name)}</span> <span class="d">— ${ph(a.note)}</span>`).join("\n") },
+    ME.achievements.map(a => `<span class="a">★</span> <span class="b">${esc(a.name)}</span>${opt(a.note, ` <span class="d">— `, `</span>`)}`).join("\n") },
   certifications: { d: "courses & certificates", run: () => ME.certifications.length
-    ? ME.certifications.map(c => `• ${ph(c.name)} <span class="d">— ${esc(c.issuer)}, ${ph(c.year)}</span>`).join("\n")
+    ? ME.certifications.map(c => `• ${ph(c.name)} <span class="d">— ${esc(c.issuer)}${opt(c.year, ", ")}</span>`).join("\n")
     : `<span class="d">no certificates listed yet</span>` },
   contact: { d: "how to reach me", run: () =>
     `<div class="grid2"><span class="u">email</span><span>${linkOr(ME.contact.email)}</span><span class="u">github</span><span>${linkOr(ME.contact.github)}</span><span class="u">linkedin</span><span>${linkOr(ME.contact.linkedin)}</span></div>` },
@@ -290,8 +306,8 @@ const C = {
     const art = ["  ██████  ","  ██   ██ ","  ██████  ","  ██   ██ ","  ██   ██ "].join("\n");
     const info = [
       `<span class="u">${ME.user}</span>@<span class="u">${ME.host}</span>`, "-----------------",
-      `<span class="u">OS</span>: Ubuntu 26.04 LTS x86_64`, `<span class="u">Location</span>: ${esc(ME.location)}`, `<span class="u">Role</span>: ${esc(ME.role)}`,
-      `<span class="u">Shell</span>: bash`, `<span class="u">Langs</span>: ${ME.skills.languages.map(esc).join(", ")}`,
+      `<span class="u">Location</span>: ${esc(ME.location)}`, `<span class="u">Role</span>: ${esc(ME.role)}`,
+      `<span class="u">Langs</span>: ${ME.skills.languages.map(esc).join(", ")}`,
       `<span class="u">Status</span>: open to internship`, `<span class="u">Award</span>: ${esc(ME.achievements[0].name)}`, `<span class="u">Uptime</span>: ${uptime()}`
     ].join("\n");
     return `<div class="neo"><pre>${art}</pre><div>${info}</div></div>`;
@@ -307,7 +323,12 @@ const C = {
   exit: { d: "", hidden: true, run: () => `<span class="d">logout? nice try. you're stuck with me.</span>` },
 };
 const NAV = ["help","about","projects","skills","experience","education","achievements","certifications","contact","cv","clear"];
-$("#nav").innerHTML = NAV.map(n => `<button data-run="${n}">${n}</button>`).join('<span class="sep">|</span>');
+$("#nav").innerHTML = NAV.map(n => `<span class="nav-item"><button data-run="${n}">${n}</button></span>`).join("");
+$("#links").innerHTML = [
+  [`https://${ME.contact.github}`, "github"],
+  [`https://${ME.contact.linkedin}`, "linkedin"],
+  [ME.cvLink, "cv.pdf"]
+].filter(([u]) => u && !/\[/.test(u)).map(([u,t]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
 
 const t0 = Date.now();
 function uptime(){ const s = Math.floor((Date.now()-t0)/1000); return `${Math.floor(s/60)} min ${s%60} s`; }
